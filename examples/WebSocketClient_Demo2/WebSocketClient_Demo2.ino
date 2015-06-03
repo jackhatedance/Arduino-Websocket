@@ -73,7 +73,7 @@ void loop() {
       Serial.println(data);
     }else
     {
-      Serial.print("Received data: NONE ");
+      Serial.println("Received data: NONE ");
     }
     
     // capture the value of analog 1, send it along
