@@ -91,11 +91,15 @@ public:
     bool handshake(Client &client);
     
     // Get data off of the stream
-    bool getData(String& data, uint8_t *opcode = NULL);
-
+    //by jack
+	boolean getData(char* data, int dataLength, uint8_t *opcode = NULL);
+	
     // Write data to the stream
     void sendData(const char *str, uint8_t opcode = WS_OPCODE_TEXT);
     void sendData(String str, uint8_t opcode = WS_OPCODE_TEXT);
+	
+	
+	
 
     char *path;
     char *host;
@@ -111,7 +115,8 @@ private:
     // websocket connection.
     bool analyzeRequest();
 
-    bool handleStream(String& data, uint8_t *opcode);    
+    bool handleStream(char* data, int dataLength, uint8_t *opcode);   
+	
     
     // Disconnect user gracefully.
     void disconnectStream();

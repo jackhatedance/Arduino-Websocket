@@ -10,49 +10,30 @@
 
 #include <WebSocketClient.h>
 
-WiFlyClient client = WiFlyClient();
+byte mac[]    = {  0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0x04 };
+char* serverName = "echo.websocket.org";
+
+EthernetClient client;
 WebSocketClient webSocketClient;
 
 void setup() {
   
 
   Serial.begin(9600);
-  SC16IS750.begin();
-  
-  WiFly.setUart(&SC16IS750);
-  
-  WiFly.begin();
-  
-  // This is for an unsecured network
-  // For a WPA1/2 network use auth 3, and in another command send 'set wlan phrase PASSWORD'
-  // For a WEP network use auth 2, and in another command send 'set wlan key KEY'
-  WiFly.sendCommand(F("set wlan auth 1"));
-  WiFly.sendCommand(F("set wlan channel 0"));
-  WiFly.sendCommand(F("set ip dhcp 1"));
-  
-  Serial.println(F("Joining WiFi network..."));
-  
-
-  // Here is where you set the network name to join
-  if (!WiFly.sendCommand(F("join arduino_wifi"), "Associated!", 20000, false)) {    
-    Serial.println(F("Association failed."));
-    while (1) {
-      // Hang on failure.
-    }
+  if (Ethernet.begin(mac) == 0) {
+    Serial.println("Failed to configure Ethernet using DHCP");
+    // no point in carrying on, so do nothing forevermore:
+    for (;;)
+      ;
   }
-  
-  if (!WiFly.waitForResponse("DHCP in", 10000)) {  
-    Serial.println(F("DHCP failed."));
-    while (1) {
-      // Hang on failure.
-    }
+  // print your local IP address:
+  Serial.print("My IP address: ");
+  for (byte thisByte = 0; thisByte < 4; thisByte++) {
+    // print the value of each byte of the IP address:
+    Serial.print(Ethernet.localIP()[thisByte], DEC);
+    Serial.print(".");
   }
-
-  // This is how you get the local IP as an IPAddress object
-  Serial.println(WiFly.localIP());
-  
-  // This delay is needed to let the WiFly respond properly
-  delay(100);
+  Serial.println();
 
   // Connect to the websocket server
   if (client.connect("echo.websocket.org", 80)) {
@@ -79,22 +60,30 @@ void setup() {
 }
 
 void loop() {
-  String data;
+  int dataLength =100;
+  char* data = new char[dataLength];
+  
   
   if (client.connected()) {
     
-    data = webSocketClient.getData();
+    bool result = webSocketClient.getData(data, dataLength);
 
-    if (data.length() > 0) {
+    if (result) {
       Serial.print("Received data: ");
       Serial.println(data);
+    }else
+    {
+      Serial.print("Received data: NONE ");
     }
     
     // capture the value of analog 1, send it along
     pinMode(1, INPUT);
-    data = String(analogRead(1));
+    String sendData = String(analogRead(1));
     
-    webSocketClient.sendData(data);
+    Serial.print("Send data: ");
+    Serial.println(sendData);
+      
+    webSocketClient.sendData(sendData);
     
   } else {
     

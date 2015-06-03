@@ -134,7 +134,7 @@ bool WebSocketClient::analyzeRequest() {
 }
 
 
-bool WebSocketClient::handleStream(String& data, uint8_t *opcode) {
+bool WebSocketClient::handleStream(char* data, int dataLength, uint8_t *opcode) {
     uint8_t msgtype;
     uint8_t bite;
     unsigned int length;
@@ -209,7 +209,7 @@ bool WebSocketClient::handleStream(String& data, uint8_t *opcode) {
         }
     }
         
-    data = "";
+    String stringData = "";
         
     if (opcode != NULL)
     {
@@ -218,19 +218,26 @@ bool WebSocketClient::handleStream(String& data, uint8_t *opcode) {
                 
     if (hasMask) {
         for (i=0; i<length; ++i) {
-            data += (char) (timedRead() ^ mask[i % 4]);
+            stringData += (char) (timedRead() ^ mask[i % 4]);
             if (!socket_client->connected()) {
                 return false;
             }
         }
     } else {
         for (i=0; i<length; ++i) {
-            data += (char) timedRead();
+            stringData += (char) timedRead();
             if (!socket_client->connected()) {
                 return false;
             }
         }            
     }
+	
+	//String to char*
+	int size = stringData.length() + 1;
+	if(size > dataLength)
+		return false;
+	
+	stringData.toCharArray(data, size);
     
     return true;
 }
@@ -248,8 +255,10 @@ void WebSocketClient::disconnectStream() {
     socket_client->stop();
 }
 
-bool WebSocketClient::getData(String& data, uint8_t *opcode) {
-    return handleStream(data, opcode);
+  
+
+bool WebSocketClient::getData(char* data, int dataLength, uint8_t *opcode) {
+    return handleStream(data, dataLength, opcode);
 }    
 
 void WebSocketClient::sendData(const char *str, uint8_t opcode) {
