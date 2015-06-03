@@ -92,15 +92,18 @@ public:
     
     // Get data off of the stream
     //by jack
+	//TEXT
 	boolean getData(char* data, int dataLength, uint8_t *opcode = NULL);
+	//BINARY
+	int getData(uint8_t* data, int dataLength, uint8_t *opcode = NULL);
 	
     // Write data to the stream
     void sendData(const char *str, uint8_t opcode = WS_OPCODE_TEXT);
     void sendData(String str, uint8_t opcode = WS_OPCODE_TEXT);
 	
+	//binary
+	void sendData(uint8_t *data, int dataLength, uint8_t opcode = WS_OPCODE_BINARY);
 	
-	
-
     char *path;
     char *host;
     char *protocol;
@@ -115,8 +118,10 @@ private:
     // websocket connection.
     bool analyzeRequest();
 
+	//TEXT
     bool handleStream(char* data, int dataLength, uint8_t *opcode);   
-	
+	//BINARY
+	int handleStream(uint8_t* data, int dataLength, uint8_t *opcode);   
     
     // Disconnect user gracefully.
     void disconnectStream();
@@ -125,6 +130,9 @@ private:
 
     void sendEncodedData(char *str, uint8_t opcode);
     void sendEncodedData(String str, uint8_t opcode);
+	
+	//binary by jack
+	void sendEncodedData(uint8_t *data, int dataLength, uint8_t opcode);
 };
 
 
