@@ -387,7 +387,7 @@ void WebSocketClient::sendData(const char *str, uint8_t opcode) {
     }
 }
 
-void WebSocketClient::sendData(uint8_t *data, int dataLength, uint8_t opcode) {
+void WebSocketClient::sendBinaryData(uint8_t *data, int dataLength, uint8_t opcode) {
 #ifdef DEBUGGING
     Serial.print(F("Sending binary data... "));
     //Serial.println(str);
@@ -458,7 +458,7 @@ void WebSocketClient::sendEncodedData(uint8_t *data, int dataLength, uint8_t opc
         socket_client->write((uint8_t) (size >> 8));
         socket_client->write((uint8_t) (size & 0xFF));
     } else {
-        //socket_client->write((uint8_t) size | WS_MASK);
+        socket_client->write((uint8_t) size | WS_MASK);
     }
 
 	/* binary no need masks

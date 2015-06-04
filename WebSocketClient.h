@@ -102,7 +102,7 @@ public:
     void sendData(String str, uint8_t opcode = WS_OPCODE_TEXT);
 	
 	//binary
-	void sendData(uint8_t *data, int dataLength, uint8_t opcode = WS_OPCODE_BINARY);
+	void sendBinaryData(uint8_t *data, int dataLength, uint8_t opcode = WS_OPCODE_BINARY);
 	
     char *path;
     char *host;
