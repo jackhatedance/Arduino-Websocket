@@ -6,7 +6,7 @@
 #include "sha1.h"
 #include "base64.h"
 
-
+#define DEBUGGING
 bool WebSocketClient::handshake(Client &client) {
 
     socket_client = &client;
@@ -63,10 +63,16 @@ bool WebSocketClient::analyzeRequest() {
 
 #ifdef DEBUGGING
     Serial.println(F("Sending websocket upgrade headers"));
-#endif    
+    Serial.print("GET ");
+	Serial.print(path);
+	Serial.println(" HTTP/1.1\r\n");
+	
+	Serial.print("Sec-WebSocket-Protocol: ");
+	Serial.println(protocol);
+#endif 	
 
-    socket_client->print(F("GET "));
-    socket_client->print(path);
+    socket_client->print(F("GET "));	
+	socket_client->print(path);
     socket_client->print(F(" HTTP/1.1\r\n"));
     socket_client->print(F("Upgrade: websocket\r\n"));
     socket_client->print(F("Connection: Upgrade\r\n"));
@@ -76,11 +82,12 @@ bool WebSocketClient::analyzeRequest() {
     socket_client->print(F("Sec-WebSocket-Key: "));
     socket_client->print(key);
     socket_client->print(CRLF);
-    socket_client->print(F("Sec-WebSocket-Protocol: "));
+    socket_client->print(F("Sec-WebSocket-Protocol: "));	
     socket_client->print(protocol);
-    socket_client->print(CRLF);
+    socket_client->print(CRLF);	
     socket_client->print(F("Sec-WebSocket-Version: 13\r\n"));
     socket_client->print(CRLF);
+
 
 #ifdef DEBUGGING
     Serial.println(F("Analyzing response headers"));

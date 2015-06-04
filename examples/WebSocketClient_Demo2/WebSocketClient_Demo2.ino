@@ -11,7 +11,8 @@
 #include <WebSocketClient.h>
 
 byte mac[]    = {  0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0x04 };
-char* serverName = "echo.websocket.org";
+char* server = "www.qa.driverstack.com";
+int port =80;
 
 EthernetClient client;
 WebSocketClient webSocketClient;
@@ -36,7 +37,7 @@ void setup() {
   Serial.println();
 
   // Connect to the websocket server
-  if (client.connect("echo.websocket.org", 80)) {
+  if (client.connect(server, port)) {
     Serial.println("Connected");
   } else {
     Serial.println("Connection failed.");
@@ -46,8 +47,9 @@ void setup() {
   }
 
   // Handshake with the server
-  webSocketClient.path = "/";
-  webSocketClient.host = "echo.websocket.org";
+  webSocketClient.path = "/mqtt";
+  webSocketClient.host = server;
+  webSocketClient.protocol = "mqtt";
   
   if (webSocketClient.handshake(client)) {
     Serial.println("Handshake successful");
